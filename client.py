@@ -4,7 +4,7 @@ import tkinter.font as font
 import socket
 
 connexion_serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # permet connexion : IPV4 et TCP
-connexion_serveur.connect(('192.168.1.236', 5566)) # TODO à remplacer par l'adresse IPV4 du PC hôte
+connexion_serveur.connect(('AREMPLACER', 5566)) # TODO à remplacer par l'adresse IPV4 du PC hôte
 data = "Demande de connexion d'un client !"
 data = data.encode("utf8")
 connexion_serveur.send(data)
