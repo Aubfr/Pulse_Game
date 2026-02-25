@@ -1,30 +1,38 @@
 import socket
 import threading
-
-class ThreadForClient(threading.Thread):
-    def __init__(self, conn):
-        threading.Thread.__init__(self)
-        self.conn = conn
-
-    def run(self):
-        data = self.conn.recv(1024)
-        data = data.decode("utf8")
-        print(data)
+import json
 
 
-host, port = ("", 5566)
+def handle_client(client_socket, address):
+    print(f"Connexion de {address}")
+    while True:
+        try:
+            message = client_socket.recv(1024)
+            if message.decode("utf8").startswith("givename"):
+                with open("names.json", "w") as f:
+                    json.dump(message.decode("utf8"), f)
+                client_socket.send("Message du serveur : Nom reçu !".encode("utf8"))
+            elif not message:
+                break
+            else:
+                print(f"Message reçu : {message.decode('utf8')}")
+                client_socket.send("CONNEXIONOK".encode("utf8"))
+        finally:
+            print("Retour cycle")
 
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socket.bind((host, port))
-print("Le serveur est démarré")
 
+socket_ecoute = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # IPV4 and TCP
+socket_ecoute.bind(('', 5566)) # TODO localhost and port 5566
+# Ici, le serveur est accessible depuis n'importe interface réseau
+
+print("Serveur en attente...")
+
+socket_ecoute.listen(5)
 while True:
-    socket.listen(5)
-    conn, adress = socket.accept()
-    print("Un client vient de se connecter !")
+    client_socket, address = socket_ecoute.accept()
 
-    my_thread = ThreadForClient(conn)
-    my_thread.start()
-
-conn.close()
-socket.close
+    thread = threading.Thread(
+        target=handle_client,
+        args=(client_socket, address)
+    )
+    thread.start()
