@@ -9,8 +9,14 @@ def handle_client(client_socket, address):
         try:
             message = client_socket.recv(1024)
             if message.decode("utf8").startswith("givename"):
-                with open("names.json", "w") as f:
-                    json.dump(message.decode("utf8"), f)
+                print(message.decode("utf8"))
+                with open("names.json", "r+") as f:
+                    message = message.removeprefix(b"givename")
+                    json_data = json.load(f)
+                    json_data.append(message.decode("utf8"))
+                    f.seek(0)
+                    json.dump(json_data, f, indent=4)
+                    f.truncate()  # supprime l'éventuel résidu si le nouveau contenu est plus court
                 client_socket.send("Message du serveur : Nom reçu !".encode("utf8"))
             elif not message:
                 break

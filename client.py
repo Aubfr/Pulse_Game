@@ -4,8 +4,8 @@ import tkinter.font as font
 import socket
 
 connexion_serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # permet connexion : IPV4 et TCP
-connexion_serveur.connect(('AREMPLACER', 5566)) # TODO à remplacer par l'adresse IPV4 du PC hôte
-data = "Demande de connexion d'un client !"
+connexion_serveur.connect(('192.168.1.236', 5566)) # TODO à remplacer par l'adresse IPV4 du PC hôte
+data = "Demande de connexion d'un client ! -- MESSAGE INITIAL"
 data = data.encode("utf8")
 connexion_serveur.send(data)
 
@@ -45,10 +45,10 @@ class PulseGame_input_name(Tk):
         def stock_name():
 
             try:
-                print("Un client est sur le point de donner son nom !")
-
-                
-                data = ("givename " + entry.get()).encode("utf8")
+                print("DEBUG : Vous êtes sur le point de donner son nom !")
+                entry_name = entry.get()
+                prefix_for_server = "givename"
+                data = (prefix_for_server + entry_name).encode("utf8")
                 connexion_serveur.sendall(data)
 
             except ConnectionRefusedError:
@@ -61,24 +61,31 @@ class PulseGame_input_name(Tk):
                 except:
                     print("L'envoie du nom a échoué")
                 if get_verif.decode("utf8").startswith("Message"):
-                    #Ici lancement de la fenêtre de jeu
-                    print("Votre nom a bien été stocké !")
+                    # TODO Ici lancement de la fenêtre de jeu
+                    print("DEBUG : Votre nom a bien été stocké par le serveur !")
                 else:
                     print("La transmission du nom a échouée !")
                 PulseGame_wait(self)
                 self.withdraw()
 
+        self.pulse_game_logo = PhotoImage(file="pulse_game_logo.png")
+        label_logo = Label(self, image=self.pulse_game_logo)
+        label_logo.place(x = 100, y = 300)
+
         label_name = Label(self, text="Veuillez entrer votre nom pour commencer !", bg = "aqua")
         label_name["font"] = f_15
-        label_name.place(x = 300, y = 250)
+        label_name.place(x = 300, y = 100)
 
         entry = Entry(self,font=f_35, fg = "black")
-        entry.place(x = 270, y = 300)
+        entry.place(x = 270, y = 150)
 
         button_name = Button(self, text="Valider", command= stock_name)
         button_name["font"] = f_15
-        button_name.place(x= 450, y = 390)
+        button_name.place(x= 460, y = 240)
 
+        label_credits = Label(self, text="Dévéloppé par Aubin avec les conseils d'Oery et la contribution de Chamseddine", bg="black", fg="white")
+        label_credits["font"] = f_15
+        label_credits.place(x = 110, y = 665)
 
         self.geometry("1000x700")
 
