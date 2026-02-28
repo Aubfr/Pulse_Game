@@ -3,21 +3,21 @@ import threading
 import json
 
 
+
+socket_client_data = {}
+
 def handle_client(client_socket, address):
     print(f"Connexion de {address}")
     while True:
         try:
             message = client_socket.recv(1024)
             if message.decode("utf8").startswith("givename"):
-                print(message.decode("utf8"))
-                with open("names.json", "r+") as f:
-                    message = message.removeprefix(b"givename")
-                    json_data = json.load(f)
-                    json_data.append(message.decode("utf8"))
-                    f.seek(0)
-                    json.dump(json_data, f, indent=4)
-                    f.truncate()  # supprime l'éventuel résidu si le nouveau contenu est plus court
-                client_socket.send("Message du serveur : Nom reçu !".encode("utf8"))
+                name = message.decode("utf8").removeprefix("givename").strip()
+
+                socket_client_data[name] = client_socket
+
+                client_socket.send("Nom reçu !".encode("utf8")) # TODO nettoyuer le client socket stocké.
+                print(socket_client_data)
             elif not message:
                 break
             else:

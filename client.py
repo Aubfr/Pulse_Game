@@ -29,8 +29,7 @@ class PulseGame_wait(Toplevel):
         self.label.config(text="En attente de l'hôte " + "." * self.dots)
         self.after(300, self.animate)
         self.label_confirm = Label(self, bg ="red")
-        self.label_confirm.place(x = 200, y = 200)    
-        #lancer le jeu principal une fois le serveur ayant donné le départ
+        self.label_confirm.place(x = 200, y = 200)
 
 
 
@@ -60,11 +59,11 @@ class PulseGame_input_name(Tk):
                     print(get_verif.decode("utf8"))
                 except:
                     print("L'envoie du nom a échoué")
-                if get_verif.decode("utf8").startswith("Message"):
+                if get_verif.decode("utf8").startswith("Nom"):
                     # TODO Ici lancement de la fenêtre de jeu
                     print("DEBUG : Votre nom a bien été stocké par le serveur !")
                 else:
-                    print("La transmission du nom a échouée !")
+                    print("La vérification demandée au serveur a échouée !")
                 PulseGame_wait(self)
                 self.withdraw()
 
